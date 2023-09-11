@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 from sklearn.model_selection import KFold
 from sklearn.tree import DecisionTreeClassifier
@@ -8,9 +9,14 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
 
 # Đọc dữ liệu
-data = pd.read_csv("Raisin_Dataset.csv", delimiter=",")
+data = pd.read_excel('Dry_Bean_Dataset.xlsx')
+
+#Fill dữ liệu trùng với cái trước nó
+data = data.fillna(method='pad')
+
 
 # Đưa dữ liệu về đúng kiểu của nó
 def to_typedata(dataset_name, features, typedata):
@@ -26,25 +32,53 @@ def transfer_to_numberic_data(dataset_name, features):
             i+=1
     return dataset_name
 
+# Đổi dữ liệu cột String về dữ liệu kiểu số (float)
+def transfer_string_to_float_data(dataset_name, features):
+    for col in features:
+        col_values = dataset_name[col]
+        for value in col_values:
+            if isinstance(value, str):
+                dataset_name[col] = float(value.replace(',', '.'))
+            else:
+                dataset_name[col] = float(value)
+    return dataset_name
+
 #------Đổi dữ liệu String sang dữ liệu kiểu số---------
 columns = ['Class']
 data = transfer_to_numberic_data(data, columns)
 
-X = data.iloc[:,0:7]
-y = data.Class
+junk_column = ['Compactness', 'ShapeFactor3']
+data = transfer_string_to_float_data(data, junk_column)
+
+scaler = StandardScaler();
+
+X = data.iloc[:,0:17]
+# Chuẩn hoá dữ liệu
+# X = scaler.fit_transform(X)
 
 # Chuyển đổi dữ liệu kiểu số để thư viện sklearn nhận diện
+y = data.Class
 y = y.astype('int')
+print(data.dtypes)
+
+# Kiểm tra dữ liệu isnull?
+print("\n")
+print("Kiem tra xem du lieu co bi thieu (NULL) khong?")
+print(data.isnull().sum())
 
 # Chuyển đổi kiểu đối tượng
 features = ['Class']
 to_typedata(data, features, 'int64')
 
+# features = ['Compactness', 'ShapeFactor3', 'ConvexArea', 'Area']
+# for i in features:
+#     to_typedata(data, i, 'float64')
+    
 # ----------------------------Nghi Thức HOLD_OUT----------------------------
 print("Nghi thuc kiem tra Hold_out\n")
 max = 0;
 max_index = 0;
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/3.0, random_state = 10)
+X_train, X_test, y_train, y_test = train_test_split(scaler.fit_transform(X), y, test_size=1/3.0, random_state = 10)
 for i in range(1, 11):
 	Tree = DecisionTreeClassifier(criterion="entropy", random_state=10, max_depth=i+5, min_samples_leaf=i+1)
 	Tree.fit(X_train, y_train)
@@ -54,10 +88,10 @@ for i in range(1, 11):
 		max = acc
 		max_index = i
 	print ("Lan lap ", i, " Do chinh xac =", round(acc*100, 2))
-print(max_index)
 
-# ----------------------------Nghi Thức K_FOLD----------------------------
+# # ----------------------------Nghi Thức K_FOLD----------------------------
 kf = KFold(n_splits=10, shuffle = True)
+
 print("\nNghi thuc kiem tra K-fold\n")
 
 KNN = KNeighborsClassifier(n_neighbors = 10)
@@ -79,6 +113,7 @@ for train_index, test_index in kf.split(X):
 	#-------------Split Data--------------
 	X_train, X_test = X.iloc[train_index], X.iloc[test_index]
 	y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+ 
 	print("=============================")
 	print("\nLan lap thu", i, "")
 	i = i + 1
@@ -115,6 +150,3 @@ print("KNN", arrKNN)
 print("Bayes", arrBayes)
 
 print("\nDo chinh xac TB:\nTree : ", round(float(total_acc_tree/10), 2), "%\nKNN : ", round(total_acc_knn/10, 2), "%\nBayes : ", round(total_acc_bayes/10, 2), "%")
-
-
-
