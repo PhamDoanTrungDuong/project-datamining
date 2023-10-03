@@ -36,11 +36,9 @@ def transfer_to_numberic_data(dataset_name, features):
 def transfer_string_to_float_data(dataset_name, features):
     for col in features:
         col_values = dataset_name[col]
-        for value in col_values:
+        for index, value in enumerate(dataset_name[col]):
             if isinstance(value, str):
-                dataset_name[col] = float(value.replace(',', '.'))
-            else:
-                dataset_name[col] = float(value)
+                dataset_name.at[index, col] = float(value.replace(',', '.'))
     return dataset_name
 
 #------Đổi dữ liệu String sang dữ liệu kiểu số---------
