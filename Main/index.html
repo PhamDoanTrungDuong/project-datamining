@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>Decision Tree Classifier</title>
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         font-family: Arial, sans-serif;
+         background-image: url('https://media-cldnry.s-nbcnews.com/image/upload/newscms/2021_06/1671968/dried-beans-mc-main1-210209.jpg');
+         /* Replace 'background.jpg' with your image file path */
+         background-size: cover;
+         margin: 0;
+         padding: 0;
+      }
+
+      h1 {
+         text-align: center;
+         margin-top: 20px;
+         color: #ffffff;
+         /* Change the color as desired */
+      }
+
+      h2 {
+         text-align: center;
+         margin-top: 20px;
+         color: #007bff;
+         /* Change the color as desired */
+      }
+
+      form,
+      #result {
+         max-width: 400px;
+         margin: 0 auto;
+         background-color: #ffffff;
+         padding: 20px;
+         border-radius: 10px;
+         box-shadow: 0px 0px 10px #888888;
+      }
+
+      label {
+         font-weight: bold;
+      }
+
+      select {
+         width: 100%;
+         padding: 10px;
+         margin-bottom: 10px;
+         border: 1px solid #ccc;
+         border-radius: 5px;
+      }
+
+      button {
+         display: block;
+         width: 100%;
+         padding: 10px;
+         background-color: #007bff;
+         color: #ffffff;
+         border: none;
+         border-radius: 5px;
+         cursor: pointer;
+      }
+
+      button:hover {
+         background-color: #0056b3;
+      }
+
+      h2 {
+         text-align: center;
+         margin-top: 20px;
+      }
+
+      #prediction-result {
+         text-align: center;
+         font-weight: bold;
+         font-size: 18px;
+      }
+
+      #result {
+         margin-top: 5px;
+      }
+   </style>
+</head>
+
+<body>
+   <h1 id="title">Dự Đoán Loại Đạu Dựa Trên Thông Số</h1>
+   <form id="prediction-form">
+      <label for="area">Area:</label>
+      <select id="area" name="area">
+         <option value="28395">28395</option>
+         <option value="29380">29380</option>
+         <option value="30008">30008</option>
+         <option value="164719">164719</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="perimeter">Perimeter:</label>
+      <select id="perimeter" name="perimeter">
+         <option value="610.291">610.291</option>
+         <option value="624.11">624.11</option>
+         <option value="645.884">645.884</option>
+         <option value="1536.30">1536.30</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="majorAxisLength">MajorAxisLength:</label>
+      <select id="majorAxisLength" name="majorAxisLength">
+         <option value="208.1781167">208.1781167</option>
+         <option value="212.8261299">212.8261299</option>
+         <option value="210.557999">210.557999</option>
+         <option value="572.91">572.91</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="minorAxisLength">MinorAxisLength:</label>
+      <select id="minorAxisLength" name="minorAxisLength">
+         <option value="173.888747">173.888747</option>
+         <option value="175.9311426">175.9311426</option>
+         <option value="182.5165157">182.5165157</option>
+         <option value="369.54">369.54</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="aspectRatio">Aspect Ratio:</label>
+      <select id="aspectRatio" name="aspectRatio">
+         <option value="1.197191424">1.197191424</option>
+         <option value="1.097356461">1.097356461</option>
+         <option value="1.55">1.55</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="eccentricity">Eccentricity:</label>
+      <select id="eccentricity" name="eccentricity">
+         <option value="0.549812187">0.549812187</option>
+         <option value="0.411785251">0.411785251</option>
+         <option value="0.562727317">0.562727317</option>
+         <option value="0.76">0.76</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="solidity">Solidity:</label>
+      <select id="solidity" name="solidity">
+         <option value="0.988855999">0.988855999</option>
+         <option value="0.984985603">0.984985603</option>
+         <option value="0.989558774">0.989558774</option>
+         <option value="0.99">0.99</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="roundness">Roundness:</label>
+      <select id="roundness" name="roundness">
+         <option value="0.958027126">0.958027126</option>
+         <option value="0.887033637">0.887033637</option>
+         <option value="0.947849473">0.947849473</option>
+         <option value="0.87">0.87</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="compactness">Compactness:</label>
+      <select id="compactness" name="compactness">
+         <option value="0.913357755">0.913357755</option>
+         <option value="0.953860842">0.953860842</option>
+         <option value="0.908774239">0.908774239</option>
+         <option value="0.79">0.79</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="shapeFactor1">Shape Factor 1:</label>
+      <select id="shapeFactor1" name="shapeFactor1">
+         <option value="0.007331506">0.007331506</option>
+         <option value="0.006978659">0.006978659</option>
+         <option value="0.007243912">0.007243912</option>
+         <option value="0.00">0.00</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="shapeFactor2">Shape Factor 2:</label>
+      <select id="shapeFactor2" name="shapeFactor2">
+         <option value="0.003147289">0.003147289</option>
+         <option value="0.003563624">0.003563624</option>
+         <option value="0.003047733">0.003047733</option>
+         <option value="0.00">0.00</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <label for="shapeFactor4">Shape Factor 4:</label>
+      <select id="shapeFactor4" name="shapeFactor4">
+         <option value="0.998723889">0.998723889</option>
+         <option value="0.998430331">0.998430331</option>
+         <option value="0.999066137">0.999066137</option>
+         <option value="0.99">0.99</option>
+         <!-- Add more options as needed -->
+      </select><br><br>
+
+      <!-- Repeat the above code for other fields -->
+
+      <button type="button" onclick="predict()">Dự đoán</button>
+   </form>
+
+   <h2 id="result">Đậu có nhãn là: <p id="prediction-result"></p>
+   </h2>
+
+
+   <script>
+      function predict() {
+         // Collect selected values from the form
+         var area = document.getElementById('area').value;
+         var perimeter = document.getElementById('perimeter').value;
+         var majorAxisLength = document.getElementById('majorAxisLength').value;
+         var minorAxisLength = document.getElementById('minorAxisLength').value;
+         var aspectRatio = document.getElementById('aspectRatio').value;
+         var eccentricity = document.getElementById('eccentricity').value;
+         var solidity = document.getElementById('solidity').value;
+         var roundness = document.getElementById('roundness').value;
+         var compactness = document.getElementById('compactness').value;
+         var shapeFactor1 = document.getElementById('shapeFactor1').value;
+         var shapeFactor2 = document.getElementById('shapeFactor2').value;
+         var shapeFactor4 = document.getElementById('shapeFactor4').value;
+
+         // Create a JSON object with the selected values
+         var features = [
+            area,
+            perimeter,
+            majorAxisLength,
+            minorAxisLength,
+            aspectRatio,
+            eccentricity,
+            solidity,
+            roundness,
+            compactness,
+            shapeFactor1,
+            shapeFactor2,
+            shapeFactor4
+         ];
+
+         // Make a POST request to the Flask app
+         fetch('http://localhost:5000/predict', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "features": features })
+         })
+            .then(function (response) {
+               if (response.status === 200) {
+                  return response.json();
+               } else {
+                  throw new Error('Error in response');
+               }
+            })
+            .then(function (data) {
+               document.getElementById('prediction-result').textContent = data;
+            })
+            .catch(function (error) {
+               console.error('Error:', error);
+            });
+      }
+   </script>
+</body>
+
+</html>
